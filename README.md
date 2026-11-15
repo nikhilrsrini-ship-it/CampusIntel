@@ -1,128 +1,176 @@
 # CAMPUSINTEL
 
-CAMPUSINTEL is a modular college student-service and workflow intelligence application. The repository now contains a working student request lifecycle, role-based API, local model pipeline, event analytics, and responsive role-aware frontend.
+CAMPUSINTEL is a student-services request portal and workflow research prototype. Students can submit and track support requests; staff can work on assigned requests; administrators can manage accounts, route work, and review service activity.
 
-## Current scope
+> **Status:** Research/demo prototype. It is not ready for real institutional data until campus identity, support and privacy policies, SMTP, security operations, and access rules are configured and reviewed. The built-in machine-learning examples use synthetic data.
 
-- Student registration/login, staff/admin provisioning, JWT access tokens, and backend role checks.
-- Request creation/tracking, administrative assignment, staff status changes, student reopening, comments, notifications, audit history, feedback, and private attachments.
-- PostgreSQL schema and Alembic migrations for the core account, request, event, assignment, prediction, feedback, notification, and audit tables.
-- Local TF-IDF/logistic-regression classification; clear `SYNTHETIC` provenance for the built-in demonstration corpus. Suggestions never select a final category, close, reject, or penalize a request.
-- TF-IDF duplicate suggestions with optional local Sentence Transformer + FAISS retrieval; requests are never merged automatically.
-- Resolution estimates use a historical median only with at least 10 resolved requests; a Random Forest training script requires at least 20 actual resolved records.
-- Live database analytics, department workload, event-history process metrics, authorized CSV exports, and an optional PM4Py event-log discovery script.
-- Frontend flows for student, staff, admin, account provisioning, tracking, updates, attachments, model suggestions, notifications, and real-record analytics.
+## Features
 
-This is a local research prototype, not a production-ready institutional deployment. Before using real student data, the institution must configure its official identity, support contact, privacy and retention policy, departments, access policy, model data, and security operations. Email verification and multi-factor authentication are not implemented. Password recovery requires a working SMTP configuration. The interface identifies missing support/privacy configuration instead of inventing trust claims.
+- **Student portal:** account registration, request submission, status history, comments, attachments, notifications, and post-resolution feedback.
+- **Staff workspace:** scoped request queue, status updates, student-visible replies, and internal notes.
+- **Administration:** account provisioning, request routing, department workload, live workflow summaries, audit history, and authorized CSV export.
+- **Request suggestions:** local category classification, duplicate candidates, and resolution estimates. Suggestions are advisory; staff make decisions and requests are never merged automatically.
+- **Password recovery:** email reset links that expire and can be used once. Completing a reset revokes existing sessions for that account.
+- **Transparency:** role-based access information, live database readiness, model-data disclosures, and visible notices when campus support or privacy details are not configured.
 
-## Start locally with Docker Compose
+## Technology
 
-Start Docker Desktop, copy `.env.example` to `.env`, replace the sample database password and JWT secret, and configure the public institution details. `VITE_INSTITUTION_NAME`, `VITE_SUPPORT_EMAIL`, and `VITE_PRIVACY_URL` are shown to users. Then run:
+- React, TypeScript, and Vite
+- FastAPI, SQLAlchemy, and Alembic
+- PostgreSQL
+- Docker Compose
+- Local scikit-learn baseline models; optional Sentence Transformers, FAISS, and PM4Py integrations
 
-```powershell
-docker compose up --build
-```
+## Run with Docker Desktop
 
-After changing any `VITE_` setting, rebuild the frontend with `docker compose up --build -d`; these settings are embedded in the frontend image.
-
-Open <http://localhost:5173>, API documentation at <http://localhost:8000/docs>, liveness at `/healthz`, and database readiness at `/readyz`. The public trust panel reports live readiness, access scope, configured support/privacy links, and whether demonstration mode is enabled. The backend applies migrations, seeds the catalog, and (when `DEMO_MODE=true`) generates labeled synthetic examples for the baseline model. Synthetic results are for demonstration only.
-
-## Password recovery
-
-The local Compose stack includes Mailpit as a development-only email catcher. On the sign-in page, choose **Forgot password?**, enter the account email, then open <http://localhost:8025> and use the reset link in the captured message. Local reset email is not delivered to external inboxes. The link is single-use and expires after `PASSWORD_RESET_EXPIRE_MINUTES` (30 by default); tokens are stored as hashes and using a reset link revokes existing login sessions for that account.
-
-For an institutional deployment, configure `SMTP_HOST`, `SMTP_PORT`, `SMTP_FROM_EMAIL`, the appropriate TLS/authentication settings, and `FRONTEND_PUBLIC_URL` in `.env`; set `VITE_EMAIL_PREVIEW_URL` to empty so the development inbox is not advertised. Rebuild the frontend after changing `VITE_` values. Reset responses do not disclose whether an email belongs to an account. Email verification and multi-factor authentication are separate features and are not currently implemented.
-
-Create the first super administrator after the services start. In PowerShell, set credentials for this command only; use at least 16 characters for the password:
+Start Docker Desktop. In PowerShell, from the project root, create a local environment file:
 
 ```powershell
-$env:INITIAL_ADMIN_EMAIL = "admin@your-college.edu"
-$env:INITIAL_ADMIN_PASSWORD = "replace-with-a-long-random-secret"
-$env:INITIAL_ADMIN_NAME = "Institution Administrator"
-docker compose exec -e INITIAL_ADMIN_EMAIL -e INITIAL_ADMIN_PASSWORD -e INITIAL_ADMIN_NAME backend python -m scripts.bootstrap_superadmin
-Remove-Item Env:INITIAL_ADMIN_EMAIL, Env:INITIAL_ADMIN_PASSWORD, Env:INITIAL_ADMIN_NAME
+Copy-Item .env.example .env
+notepad .env
 ```
 
-The seed is idempotent. PostgreSQL data, private attachments, and model artifacts use named Docker volumes. `docker compose down` preserves them; `docker compose down -v` deletes local data.
+Change `POSTGRES_PASSWORD` and use the same value in `DATABASE_URL`. Replace `JWT_SECRET` with a long, random secret. The `.env` file is ignored by Git; keep it private.
 
-## Local backend and frontend
-
-Use Python 3.12+ and Node.js 24+. Start PostgreSQL, then from `backend/`:
+Build and start the services:
 
 ```powershell
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install -r requirements-dev.txt
-$env:DATABASE_URL = "postgresql+psycopg://campusintel:your-password@localhost:5432/campusintel"
-$env:JWT_SECRET = "replace-with-a-long-random-secret"
-alembic upgrade head
-python -m scripts.seed_catalog
-python -m scripts.generate_synthetic_dataset
-python -m scripts.train_classification_model
-uvicorn app.main:app --reload
+docker compose up --build -d
+docker compose ps
 ```
 
-The last two commands use only explicitly labeled synthetic data. Set `CLASSIFICATION_MODEL_PATH` to a trained model built from authorized, institution-labeled examples before using classification as an institutional aid.
+Wait for the database and backend to report **healthy**. Then open:
 
-From `frontend/` in a second terminal:
+- Student/admin portal: <http://localhost:5173>
+- API documentation: <http://localhost:8000/docs>
+- Database readiness: <http://localhost:8000/readyz>
+- Local development email inbox: <http://localhost:8025>
+
+Compose runs PostgreSQL, the API, the frontend, and Mailpit. Reset emails are captured by Mailpit and **are not sent to real email inboxes** in the local setup. Mailpit’s web interface is bound to localhost. Its default ports and Docker setup are documented in the [Mailpit installation guide](https://mailpit.axllent.org/docs/install/docker/).
+
+### Create the first administrator
+
+Create a superadmin once, using an email you control. This PowerShell example prompts for the password without echoing it; use at least 16 characters.
 
 ```powershell
-npm.cmd install
-npm.cmd run dev
-npm.cmd test
+$env:INITIAL_ADMIN_EMAIL = Read-Host "Administrator email"
+$env:INITIAL_ADMIN_NAME = Read-Host "Administrator name"
+$secureAdminPassword = Read-Host "Choose administrator password (16+ characters)" -AsSecureString
+$passwordPointer = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($secureAdminPassword)
+try {
+    $env:INITIAL_ADMIN_PASSWORD = [Runtime.InteropServices.Marshal]::PtrToStringBSTR($passwordPointer)
+    docker compose exec -e INITIAL_ADMIN_EMAIL -e INITIAL_ADMIN_PASSWORD -e INITIAL_ADMIN_NAME backend python -m scripts.bootstrap_superadmin
+} finally {
+    [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($passwordPointer)
+    $secureAdminPassword.Dispose()
+    Remove-Item Env:INITIAL_ADMIN_EMAIL, Env:INITIAL_ADMIN_PASSWORD, Env:INITIAL_ADMIN_NAME -ErrorAction SilentlyContinue
+    Remove-Variable secureAdminPassword, passwordPointer -ErrorAction SilentlyContinue
+}
 ```
 
-## Migrations and accounts
+On success, the command prints `Initial super administrator created.` Sign in at <http://localhost:5173> with the email and password you supplied. If it says the account already exists, bootstrap did not change its password; use the password-reset flow instead.
 
-After changing SQLAlchemy models, create and review a migration from `backend/`:
+Students can self-register. Administrators can also create student or staff accounts from the **Team** area. Only superadmins can create additional administrators.
+
+### Reset a forgotten password
+
+1. On the sign-in screen, choose **Forgot password?** and enter the account email.
+2. Open <http://localhost:8025> and find the reset email captured by Mailpit.
+3. Follow its link and choose a new password.
+
+The app gives the same confirmation whether or not an active account matches the email. Reset links are single-use and expire after 30 minutes by default. Existing sessions for the account are invalidated after a successful reset. Passwords are stored as hashes; the app cannot reveal a saved password.
+
+For a real deployment, configure `SMTP_HOST`, `SMTP_PORT`, `SMTP_FROM_EMAIL`, SMTP authentication/TLS settings, and `FRONTEND_PUBLIC_URL` in `.env`. Set `VITE_EMAIL_PREVIEW_URL` to empty so the local inbox is not advertised. Rebuild after changing any `VITE_` setting:
 
 ```powershell
-alembic revision --autogenerate -m "describe change"
-alembic upgrade head
+docker compose up --build -d
 ```
 
-Students can register. Staff and admin accounts must be created by an administrator from the secured workspace or by the initial bootstrap script. Students cannot set their own roles. `ADMIN` accounts can provision staff; only `SUPER_ADMIN` accounts can provision other administrators.
-
-## Local semantic model and process mining (optional)
-
-Core services run without transformer weights. To enable the improved semantic classifier and FAISS duplicate retrieval, install the pinned optional dependencies with `python -m pip install -r requirements-ml.txt`, place an approved local Sentence Transformer model directory at the path configured by `EMBEDDING_MODEL_PATH`, and run:
+### Stop and start later
 
 ```powershell
-python -m scripts.train_semantic_classifier --embedding-model .models/all-MiniLM-L6-v2
+docker compose down
+docker compose up -d
 ```
 
-The loader uses local files only; it does not fetch model code or weights at runtime. The duplicate index is rebuilt from authorized PostgreSQL records and is not an authoritative store. For process discovery, export and analyze authorized workflow events:
+`docker compose down` preserves PostgreSQL, uploads, and model artifacts in named volumes. **`docker compose down -v` deletes those volumes and their data.**
 
-```powershell
-python -m scripts.export_process_logs
-python -m scripts.run_process_mining
-python -m scripts.evaluate_models
-```
+## Institution configuration
 
-The resolution model trains only from resolved database cases and stops unless at least 20 are available:
+Set these values in `.env` before sharing the portal with students:
 
-```powershell
-python -m scripts.train_resolution_model
-```
+| Setting | Purpose |
+| --- | --- |
+| `VITE_INSTITUTION_NAME` | Name shown in the portal |
+| `VITE_SUPPORT_EMAIL` | Institution support contact |
+| `VITE_PRIVACY_URL` | Link to the institution privacy notice |
+| `FRONTEND_PUBLIC_URL` | Public base URL used in password-reset emails |
+| `SMTP_*` | Email server and sender configuration for reset messages |
+| `PASSWORD_RESET_EXPIRE_MINUTES` | Reset-link lifetime; defaults to 30 minutes |
+| `DEMO_MODE` | Generates the synthetic baseline-model demo data when enabled |
 
-Evaluation files contain measured outputs from the selected dataset and seed. Do not interpret metrics from synthetic examples as research evidence or institutional performance.
+Vite settings beginning with `VITE_` are embedded in the frontend image at build time. Rebuild the frontend after changing them.
 
-## Tests
+## Model and research notes
 
-Backend tests use an isolated in-memory SQLite database and cover registration, ownership boundaries, role checks, assignment, status history, comment visibility, attachments, analytics, and notifications:
+The default model corpus contains synthetic examples for demonstration; it is not institutional evidence and should not be used to claim real-world model quality. Classification, duplicate, and resolution outputs are suggestions only. Staff remain responsible for reviewing and routing requests.
+
+For the research protocol, data description, and evaluation guidance, see:
+
+- [Architecture](docs/architecture.md)
+- [Setup guide](docs/setup_guide.md)
+- [Experiment protocol](backend/research/experiment_protocol.md)
+- [Dataset documentation](backend/research/dataset_documentation.md)
+- [Evaluation metrics](backend/research/evaluation_metrics.md)
+- [Methodology](backend/research/research_methodology.md)
+
+Optional semantic retrieval and process-mining workflows are described in the setup and research documents. They require additional dependencies, local model weights, or authorized institutional data.
+
+## Development
+
+### Backend
+
+Use Python 3.12 or newer. From `backend/` in PowerShell:
 
 ```powershell
 cd backend
+python -m venv .venv
 .\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements-dev.txt
 python -m pytest -q
 ```
 
-Frontend tests and production build:
+The backend requires a running PostgreSQL database for normal development. Docker Compose is the simplest way to start all services together.
+
+### Frontend
+
+Use Node.js 24 or newer. From `frontend/`:
 
 ```powershell
 cd frontend
+npm.cmd ci
 npm.cmd test
 npm.cmd run build
 ```
 
-PostgreSQL container startup and production deployment still require verification on a machine with Docker/PostgreSQL. Review [the architecture](docs/architecture.md), [setup guide](docs/setup_guide.md), [research protocol](research/experiment_protocol.md), [development log](DEVELOPMENT_LOG.md), and [tasks](TASKS.md) for limitations and current status.
+### Database migrations
+
+From `backend/`, after changing SQLAlchemy models:
+
+```powershell
+alembic revision --autogenerate -m "describe the change"
+alembic upgrade head
+```
+
+Review generated migrations before applying them to any shared database. Compose applies existing migrations automatically at backend startup.
+
+## Troubleshooting
+
+- **`localhost` refuses to connect:** make sure Docker Desktop is running, then run `docker compose up -d` and check `docker compose ps`.
+- **Backend is not running:** inspect `docker compose logs --tail 100 backend` and wait for the backend health check to pass.
+- **Forgot-password email is missing:** in the local setup, check Mailpit at <http://localhost:8025>. Local reset mail is not delivered externally.
+- **Institution links are missing:** set the corresponding `VITE_` settings in `.env`, then rebuild with `docker compose up --build -d`.
+
+## Production readiness
+
+Before using real student data, an institution must review and configure its official identity, role/access policies, privacy notice, retention schedule, support contact, response expectations, SMTP, HTTPS, secrets, backups, and attachment scanning. Email verification, multi-factor authentication, and institutional SSO are not implemented. The local Docker Compose configuration is for development and demonstration, not a production deployment recipe.
