@@ -1,0 +1,7 @@
+__pycache__
+*.py[cod]
+.pytest_cache
+private_uploads
+.models
+.venv
+data

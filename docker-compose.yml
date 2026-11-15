@@ -1,0 +1,86 @@
+services:
+  db:
+    image: postgres:16.6-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-campusintel}
+      POSTGRES_USER: ${POSTGRES_USER:-campusintel}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-local-development-only-change-me}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-campusintel} -d ${POSTGRES_DB:-campusintel}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  mailpit:
+    image: axllent/mailpit:v1.33.1
+    ports:
+      - "127.0.0.1:8025:8025"
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+    environment:
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-campusintel}:${POSTGRES_PASSWORD:-local-development-only-change-me}@db:5432/${POSTGRES_DB:-campusintel}
+      BACKEND_CORS_ORIGINS: ${BACKEND_CORS_ORIGINS:-http://localhost:5173}
+      JWT_SECRET: ${JWT_SECRET:-replace-this-local-development-secret}
+      JWT_EXPIRE_MINUTES: ${JWT_EXPIRE_MINUTES:-60}
+      UPLOAD_DIRECTORY: /app/private_uploads
+      DEMO_MODE: ${DEMO_MODE:-true}
+      CLASSIFICATION_MODEL_PATH: /app/.models/category_classifier.joblib
+      EMBEDDING_MODEL_PATH: ${EMBEDDING_MODEL_PATH:-/app/embedding_models/all-MiniLM-L6-v2}
+      RESOLUTION_MODEL_PATH: /app/.models/resolution_predictor.joblib
+      FRONTEND_PUBLIC_URL: ${FRONTEND_PUBLIC_URL:-http://localhost:5173}
+      SMTP_HOST: ${SMTP_HOST:-mailpit}
+      SMTP_PORT: ${SMTP_PORT:-1025}
+      SMTP_USERNAME: ${SMTP_USERNAME:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      SMTP_STARTTLS: ${SMTP_STARTTLS:-false}
+      SMTP_USE_SSL: ${SMTP_USE_SSL:-false}
+      SMTP_FROM_EMAIL: ${SMTP_FROM_EMAIL:-no-reply@campusintel.local}
+      SMTP_FROM_NAME: ${SMTP_FROM_NAME:-CAMPUSINTEL}
+      PASSWORD_RESET_EXPIRE_MINUTES: ${PASSWORD_RESET_EXPIRE_MINUTES:-30}
+    depends_on:
+      db:
+        condition: service_healthy
+      mailpit:
+        condition: service_started
+    command: ["sh", "-c", "alembic upgrade head && python -m scripts.seed_catalog && if [ \"$$DEMO_MODE\" = \"true\" ]; then python -m scripts.generate_synthetic_dataset && python -m scripts.train_classification_model; fi && uvicorn app.main:app --host 0.0.0.0 --port 8000"]
+    ports:
+      - "8000:8000"
+    volumes:
+      - private_uploads:/app/private_uploads
+      - model_artifacts:/app/.models
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/healthz', timeout=2)"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:8000}
+        VITE_INSTITUTION_NAME: ${VITE_INSTITUTION_NAME:-CAMPUSINTEL demonstration workspace}
+        VITE_SUPPORT_EMAIL: ${VITE_SUPPORT_EMAIL:-}
+        VITE_PRIVACY_URL: ${VITE_PRIVACY_URL:-}
+        VITE_DEMO_MODE: ${DEMO_MODE:-true}
+        VITE_PASSWORD_RESET_ENABLED: ${VITE_PASSWORD_RESET_ENABLED:-true}
+        VITE_EMAIL_PREVIEW_URL: ${VITE_EMAIL_PREVIEW_URL:-http://localhost:8025}
+        VITE_PASSWORD_RESET_EXPIRE_MINUTES: ${PASSWORD_RESET_EXPIRE_MINUTES:-30}
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "5173:5173"
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  private_uploads:
+  model_artifacts:

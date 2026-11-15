@@ -1,0 +1,111 @@
+text,category,dataset_type,scenario_id
+Please help: exam timetable has a conflicting date.,Examination,SYNTHETIC,Examination-0
+Exam timetable has a conflicting date before the next semester.,Examination,SYNTHETIC,Examination-0
+I need assistance because hall ticket is not available for my examination and I need an update.,Examination,SYNTHETIC,Examination-1
+Hall ticket is not available for my examination; please advise.,Examination,SYNTHETIC,Examination-1
+My request is that result shows an incorrect grade before the next semester.,Examination,SYNTHETIC,Examination-2
+Result shows an incorrect grade on my student account.,Examination,SYNTHETIC,Examination-2
+Could someone review this? revaluation application status is missing; please advise.,Examination,SYNTHETIC,Examination-3
+Revaluation application status is missing.,Examination,SYNTHETIC,Examination-3
+I am reporting that exam registration payment is not reflected on my student account.,Examination,SYNTHETIC,Examination-4
+Exam registration payment is not reflected and I need an update.,Examination,SYNTHETIC,Examination-4
+Please help: internal assessment marks are incorrect.,Internal Assessment,SYNTHETIC,Internal Assessment-0
+Internal assessment marks are incorrect before the next semester.,Internal Assessment,SYNTHETIC,Internal Assessment-0
+I need assistance because assignment score is not visible in the portal and I need an update.,Internal Assessment,SYNTHETIC,Internal Assessment-1
+Assignment score is not visible in the portal; please advise.,Internal Assessment,SYNTHETIC,Internal Assessment-1
+My request is that continuous assessment marks were not entered before the next semester.,Internal Assessment,SYNTHETIC,Internal Assessment-2
+Continuous assessment marks were not entered on my student account.,Internal Assessment,SYNTHETIC,Internal Assessment-2
+Could someone review this? internal marks differ from my evaluated paper; please advise.,Internal Assessment,SYNTHETIC,Internal Assessment-3
+Internal marks differ from my evaluated paper.,Internal Assessment,SYNTHETIC,Internal Assessment-3
+I am reporting that assessment grade is missing for a course on my student account.,Internal Assessment,SYNTHETIC,Internal Assessment-4
+Assessment grade is missing for a course and I need an update.,Internal Assessment,SYNTHETIC,Internal Assessment-4
+Please help: attendance was marked absent by mistake.,Attendance,SYNTHETIC,Attendance-0
+Attendance was marked absent by mistake before the next semester.,Attendance,SYNTHETIC,Attendance-0
+I need assistance because class attendance percentage is incorrect and I need an update.,Attendance,SYNTHETIC,Attendance-1
+Class attendance percentage is incorrect; please advise.,Attendance,SYNTHETIC,Attendance-1
+My request is that medical leave attendance record needs correction before the next semester.,Attendance,SYNTHETIC,Attendance-2
+Medical leave attendance record needs correction on my student account.,Attendance,SYNTHETIC,Attendance-2
+Could someone review this? lecture attendance is missing from the portal; please advise.,Attendance,SYNTHETIC,Attendance-3
+Lecture attendance is missing from the portal.,Attendance,SYNTHETIC,Attendance-3
+I am reporting that my attendance entry did not sync on my student account.,Attendance,SYNTHETIC,Attendance-4
+My attendance entry did not sync and I need an update.,Attendance,SYNTHETIC,Attendance-4
+Please help: scholarship application needs an income certificate.,Scholarship,SYNTHETIC,Scholarship-0
+Scholarship application needs an income certificate before the next semester.,Scholarship,SYNTHETIC,Scholarship-0
+I need assistance because financial aid payment has not arrived and I need an update.,Scholarship,SYNTHETIC,Scholarship-1
+Financial aid payment has not arrived; please advise.,Scholarship,SYNTHETIC,Scholarship-1
+My request is that scholarship document upload was rejected before the next semester.,Scholarship,SYNTHETIC,Scholarship-2
+Scholarship document upload was rejected on my student account.,Scholarship,SYNTHETIC,Scholarship-2
+Could someone review this? renewal status is pending for my scholarship; please advise.,Scholarship,SYNTHETIC,Scholarship-3
+Renewal status is pending for my scholarship.,Scholarship,SYNTHETIC,Scholarship-3
+I am reporting that scholarship bank details need correction on my student account.,Scholarship,SYNTHETIC,Scholarship-4
+Scholarship bank details need correction and I need an update.,Scholarship,SYNTHETIC,Scholarship-4
+Please help: library book return is not recorded.,Library,SYNTHETIC,Library-0
+Library book return is not recorded before the next semester.,Library,SYNTHETIC,Library-0
+I need assistance because I cannot renew a borrowed book and I need an update.,Library,SYNTHETIC,Library-1
+I cannot renew a borrowed book; please advise.,Library,SYNTHETIC,Library-1
+My request is that library account has a misplaced fine before the next semester.,Library,SYNTHETIC,Library-2
+Library account has a misplaced fine on my student account.,Library,SYNTHETIC,Library-2
+Could someone review this? catalog search is unavailable; please advise.,Library,SYNTHETIC,Library-3
+Catalog search is unavailable.,Library,SYNTHETIC,Library-3
+I am reporting that my library access card is not working on my student account.,Library,SYNTHETIC,Library-4
+My library access card is not working and I need an update.,Library,SYNTHETIC,Library-4
+Please help: hostel room maintenance request.,Hostel,SYNTHETIC,Hostel-0
+Hostel room maintenance request before the next semester.,Hostel,SYNTHETIC,Hostel-0
+I need assistance because mess bill amount appears incorrect and I need an update.,Hostel,SYNTHETIC,Hostel-1
+Mess bill amount appears incorrect; please advise.,Hostel,SYNTHETIC,Hostel-1
+My request is that hostel allotment status is pending before the next semester.,Hostel,SYNTHETIC,Hostel-2
+Hostel allotment status is pending on my student account.,Hostel,SYNTHETIC,Hostel-2
+Could someone review this? water leak in the residence needs repair; please advise.,Hostel,SYNTHETIC,Hostel-3
+Water leak in the residence needs repair.,Hostel,SYNTHETIC,Hostel-3
+I am reporting that hostel entry card is not working on my student account.,Hostel,SYNTHETIC,Hostel-4
+Hostel entry card is not working and I need an update.,Hostel,SYNTHETIC,Hostel-4
+Please help: tuition payment is missing from my account.,Fee Payment,SYNTHETIC,Fee Payment-0
+Tuition payment is missing from my account before the next semester.,Fee Payment,SYNTHETIC,Fee Payment-0
+I need assistance because fee receipt is not available and I need an update.,Fee Payment,SYNTHETIC,Fee Payment-1
+Fee receipt is not available; please advise.,Fee Payment,SYNTHETIC,Fee Payment-1
+My request is that online payment failed but money was charged before the next semester.,Fee Payment,SYNTHETIC,Fee Payment-2
+Online payment failed but money was charged on my student account.,Fee Payment,SYNTHETIC,Fee Payment-2
+Could someone review this? installment amount on the portal is incorrect; please advise.,Fee Payment,SYNTHETIC,Fee Payment-3
+Installment amount on the portal is incorrect.,Fee Payment,SYNTHETIC,Fee Payment-3
+I am reporting that payment reference needs verification on my student account.,Fee Payment,SYNTHETIC,Fee Payment-4
+Payment reference needs verification and I need an update.,Fee Payment,SYNTHETIC,Fee Payment-4
+Please help: request for an enrollment certificate.,Certificates,SYNTHETIC,Certificates-0
+Request for an enrollment certificate before the next semester.,Certificates,SYNTHETIC,Certificates-0
+I need assistance because transcript application is delayed and I need an update.,Certificates,SYNTHETIC,Certificates-1
+Transcript application is delayed; please advise.,Certificates,SYNTHETIC,Certificates-1
+My request is that I need a bonafide certificate before the next semester.,Certificates,SYNTHETIC,Certificates-2
+I need a bonafide certificate on my student account.,Certificates,SYNTHETIC,Certificates-2
+Could someone review this? degree certificate dispatch status is missing; please advise.,Certificates,SYNTHETIC,Certificates-3
+Degree certificate dispatch status is missing.,Certificates,SYNTHETIC,Certificates-3
+I am reporting that official course completion letter request on my student account.,Certificates,SYNTHETIC,Certificates-4
+Official course completion letter request and I need an update.,Certificates,SYNTHETIC,Certificates-4
+Please help: course registration needs approval.,Academic Administration,SYNTHETIC,Academic Administration-0
+Course registration needs approval before the next semester.,Academic Administration,SYNTHETIC,Academic Administration-0
+I need assistance because department transfer request status and I need an update.,Academic Administration,SYNTHETIC,Academic Administration-1
+Department transfer request status; please advise.,Academic Administration,SYNTHETIC,Academic Administration-1
+My request is that my program record has the wrong specialization before the next semester.,Academic Administration,SYNTHETIC,Academic Administration-2
+My program record has the wrong specialization on my student account.,Academic Administration,SYNTHETIC,Academic Administration-2
+Could someone review this? academic calendar information is missing; please advise.,Academic Administration,SYNTHETIC,Academic Administration-3
+Academic calendar information is missing.,Academic Administration,SYNTHETIC,Academic Administration-3
+I am reporting that advisor assignment needs correction on my student account.,Academic Administration,SYNTHETIC,Academic Administration-4
+Advisor assignment needs correction and I need an update.,Academic Administration,SYNTHETIC,Academic Administration-4
+Please help: student portal displays a server error.,Technical Support,SYNTHETIC,Technical Support-0
+Student portal displays a server error before the next semester.,Technical Support,SYNTHETIC,Technical Support-0
+I need assistance because password reset page is not sending a link and I need an update.,Technical Support,SYNTHETIC,Technical Support-1
+Password reset page is not sending a link; please advise.,Technical Support,SYNTHETIC,Technical Support-1
+My request is that learning platform cannot open course files before the next semester.,Technical Support,SYNTHETIC,Technical Support-2
+Learning platform cannot open course files on my student account.,Technical Support,SYNTHETIC,Technical Support-2
+Could someone review this? college app crashes during login; please advise.,Technical Support,SYNTHETIC,Technical Support-3
+College app crashes during login.,Technical Support,SYNTHETIC,Technical Support-3
+I am reporting that wifi access credentials are not working on my student account.,Technical Support,SYNTHETIC,Technical Support-4
+Wifi access credentials are not working and I need an update.,Technical Support,SYNTHETIC,Technical Support-4
+Please help: I need help with a general campus service question.,Other,SYNTHETIC,Other-0
+I need help with a general campus service question before the next semester.,Other,SYNTHETIC,Other-0
+I need assistance because please direct my administrative query and I need an update.,Other,SYNTHETIC,Other-1
+Please direct my administrative query; please advise.,Other,SYNTHETIC,Other-1
+My request is that request for information about campus services before the next semester.,Other,SYNTHETIC,Other-2
+Request for information about campus services on my student account.,Other,SYNTHETIC,Other-2
+Could someone review this? I am unsure which office handles this issue; please advise.,Other,SYNTHETIC,Other-3
+I am unsure which office handles this issue.,Other,SYNTHETIC,Other-3
+I am reporting that general student service assistance on my student account.,Other,SYNTHETIC,Other-4
+General student service assistance and I need an update.,Other,SYNTHETIC,Other-4

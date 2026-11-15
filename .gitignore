@@ -1,0 +1,17 @@
+.env
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+*.db
+*.sqlite3
+node_modules/
+dist/
+.vite/
+*.log
+backend/.models/
+backend/uploads/
+backend/private_uploads/

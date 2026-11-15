@@ -1,0 +1,4 @@
+-r requirements-lock.txt
+sentence-transformers==6.3.0
+faiss-cpu==1.16.0
+pm4py==2.7.23.12
