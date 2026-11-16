@@ -1,0 +1,211 @@
+CAMPUSINTEL — PHASE I PROJECT REVIEW CONTENT
+============================================
+
+Prepared from the supplied Project Review Phase-I PPT template and the current CAMPUSINTEL codebase. The sections below follow the order in the template. This is presentation-ready source content; replace the cover placeholders with your team's official details.
+
+
+COVER SLIDE DETAILS
+-------------------
+Project Title: CAMPUSINTEL — Intelligent Student Services Request and Workflow Management Portal
+
+Member Name 1: [Enter name]
+USN: [Enter USN]
+Member Name 2: [Enter name]
+USN: [Enter USN]
+Member Name 3: [Enter name]
+USN: [Enter USN]
+Member Name 4: [Enter name]
+USN: [Enter USN]
+
+Project Guide: [Enter guide name]
+Designation: [Enter designation]
+Batch Number: [Enter batch number]
+Department: Computer Science and Engineering (AI & ML)
+Presentation: Project Phase-I Review
+
+
+1. PROBLEM STATEMENT
+--------------------
+
+Students often need help from different campus offices for issues involving examinations, attendance, fees, scholarships, hostel services, library access, certificates, and technology. When these requests arrive through disconnected channels, students may not know which office is responsible, whether anyone has received the request, or what action has been taken. Staff and administrators may have difficulty tracking ownership, communicating updates, identifying repeated issues, and understanding where requests are delayed.
+
+CAMPUSINTEL addresses this problem with a role-based web portal where students can submit and track service requests, staff can work on requests assigned to them or their department, and administrators can manage users, categories, assignments, and service activity. The system keeps request status and event history in a central database. Optional machine-learning suggestions can help classify requests, find similar past requests, and estimate resolution time; these suggestions are advisory and do not make decisions automatically.
+
+Problem in one sentence:
+There is a need for a transparent, traceable, and role-controlled way to submit, route, manage, and review student service requests across campus departments.
+
+Current project status and data caveat:
+CAMPUSINTEL is a research/demo prototype. Its built-in training examples are synthetic demonstration data, not real student records. The project has not established real-world accuracy, faster resolution, or improved student satisfaction at an institution.
+
+
+2. LITERATURE SURVEY
+--------------------
+
+Paper 1
+Author and year: Feras Al-Hawari and Hala Barham, 2021 (published online in 2019)
+Title: “A machine learning based help desk system for IT service management”
+Methodology / techniques used: The authors describe a university IT help-desk system and an empirically developed ticket-service classifier using a linear Support Vector Machine. The system also supports ticket lifecycle activities, user roles, comments/files, notifications, and service-performance reporting.
+Key findings: The study presents an integrated help-desk workflow and reports that ticket classification and operational KPIs can support service management. It motivates classification at submission so requests can be associated with a service earlier.
+Limitations: The system and evaluation concern one university's IT services and its local ticket categories and processes. Results cannot be assumed to transfer directly to academic, finance, hostel, or other student services, or to another institution without local data and evaluation.
+Relevance to CAMPUSINTEL: Supports the design choice to combine a request portal, role-aware lifecycle, classification suggestions, notifications, and workflow analytics.
+
+Paper 2
+Author and year: Wil van der Aalst and co-authors, 2012
+Title: “Process Mining Manifesto”
+Methodology / techniques used: A research manifesto describing process mining from event logs, including process discovery, conformance checking, and process enhancement. It explains using case identifiers, activities, timestamps, and other event attributes to analyze how work actually proceeds.
+Key findings: Event logs can be used to discover process flows and analyze performance information such as time between activities. The paper also emphasizes data quality, event meaning, privacy, and the need to interpret discovered models carefully.
+Limitations: This is a field manifesto and set of principles, not an evaluation of CAMPUSINTEL or a student-services deployment. Process analysis depends on event logs that are sufficiently complete, reliable, and well-defined; a discovered path does not by itself explain why a delay occurred.
+Relevance to CAMPUSINTEL: The project records request events and assignment history, and its analytics/process-mining scripts can summarize workflow paths and timing when appropriate event data is available.
+
+Paper 3
+Author and year: Haruna Isotani, Hironori Washizaki, Yoshiaki Fukazawa, Tsutomu Nomoto, Saori Ouji, and Shinobu Saito, 2023
+Title: “Sentence embedding and fine-tuning to automatically identify duplicate bugs”
+Methodology / techniques used: The authors use Sentence-BERT embeddings, fine-tuned on report text, to compare report elements and rank likely duplicate bug reports by similarity. They compare the proposed method with baseline text-vector approaches.
+Key findings: In the studied software-maintenance setting, separately representing report elements and fine-tuning sentence embeddings improved duplicate detection over the paper's baselines.
+Limitations: The method was designed for a specific organization's report format and Japanese-language maintenance reports. The authors identify generalization to different report formats and other real-world datasets as future work. Its findings do not establish effectiveness on campus-service requests.
+Relevance to CAMPUSINTEL: Supports presenting similar-request results as ranked candidates for human review. CAMPUSINTEL's default duplicate search uses TF-IDF cosine similarity; optional semantic tools are separate and need local validation.
+
+Literature synthesis:
+Prior work supports central help-desk workflows, text-based triage assistance, duplicate-candidate ranking, and analysis of recorded event histories. However, results from software or IT help desks cannot be treated as evidence about campus-wide student services. CAMPUSINTEL therefore presents machine-learning output as suggestions and needs institution-authorized, representative data and evaluation before any effectiveness claim.
+
+
+3. OBJECTIVES AND SCOPE OF THE PROJECT
+--------------------------------------
+
+Objectives
+• Provide students with an account-based portal to submit requests and follow their status and history.
+• Give staff a workspace for handling requests within their assignment or department scope.
+• Let administrators manage accounts, service categories, departments, assignments, and audit activity.
+• Keep request updates, comments, assignments, and notifications connected to a central request record.
+• Provide authorized administrators and staff with service and workflow summaries based on stored records.
+• Offer advisory request-category, similar-request, and resolution-time suggestions where the required model or history is available.
+• Provide password recovery through expiring, single-use reset links and invalidate existing sessions after a successful reset.
+• Make role boundaries, system readiness, demo-data provenance, and missing institution configuration visible to users.
+
+Scope included in the current prototype
+• Student registration and sign-in; privileged staff/admin provisioning.
+• Request categories such as Examination, Attendance, Scholarship, Library, Hostel, Fee Payment, Certificates, Academic Administration, and Technical Support.
+• Request submission, status changes, assignment, request history, comments, attachments, notifications, and student feedback.
+• Role-scoped access for students, staff, administrators, and superadmins.
+• Admin account/catalog functions, audit records, analytics, and CSV export.
+• Local baseline classification, duplicate suggestions, resolution estimates when enough historical data exists, and research scripts for evaluation/process analysis.
+• Local Docker Compose development environment with PostgreSQL and Mailpit for captured password-reset email.
+
+Outside current scope / limitations
+• Production identity integration such as institutional single sign-on, email verification, or multi-factor authentication.
+• A production deployment configuration, institution-wide retention policy, backup/restore operations, malware scanning, or managed object storage.
+• Validated performance on real campus request data; included ML examples are synthetic.
+• Automatic request merging, automatic final decisions, or guaranteed resolution deadlines.
+• SMS support, a campus calendar, and a production email-delivery setup by default.
+
+
+4. METHODOLOGY
+--------------
+
+Development approach
+1. Identify the users and workflow: student submits a request; an authorized administrator assigns it; staff communicates and updates status; the student follows progress and can leave feedback; management reviews service activity.
+2. Model roles, request states, categories, departments, and the history that must be retained.
+3. Implement a React/TypeScript browser interface and a FastAPI REST API.
+4. Validate API input with Pydantic schemas, enforce access on the backend, and persist records with SQLAlchemy and PostgreSQL.
+5. Track database changes with Alembic migrations and start the local services through Docker Compose.
+6. Add request workflow events, assignment history, audit records, and notifications so the service activity can be traced.
+7. Add optional analytics and advisory ML functions. Keep suggestions reviewable by staff and preserve dataset/model provenance.
+8. Check core behavior with backend API tests and frontend UI tests; evaluate any model with documented datasets and metrics before making performance claims.
+
+Request lifecycle example
+Student submits request -> system records it as SUBMITTED -> administrator assigns department/staff -> staff updates status and communicates -> system records events and sends notifications -> staff resolves request -> student can provide feedback -> management reviews aggregated service data.
+
+Machine-learning approach in the codebase
+• Classification: baseline TF-IDF text features with Logistic Regression; produces category suggestions and confidence/explanation information.
+• Duplicate search: TF-IDF vector similarity by default; optional local sentence embeddings and FAISS can be configured for semantic retrieval.
+• Resolution estimate: historical category median when the category has sufficient resolved records; a separate training script can fit a Random Forest model when there are enough resolved requests.
+• Process analysis: event records can be exported and summarized; optional PM4Py can discover directly-follows workflow patterns.
+• Human control: predictions are advisory. They do not automatically change the selected category, assign staff, merge requests, or resolve cases.
+• Evaluation caution: the demo corpus is synthetic. Real institutional use requires approved data, suitable train/test separation, privacy review, and evaluation against meaningful baselines.
+
+Security and reliability measures currently represented in the prototype
+• Passwords are stored as salted PBKDF2-HMAC-SHA256 hashes; the application cannot reveal a stored password.
+• Signed, expiring bearer tokens and backend role checks protect API routes.
+• Password reset requests avoid revealing whether an account exists; reset tokens are single-use, expire, and are stored as hashes.
+• Students see their own requests; staff access is scoped; administrative functions require elevated roles.
+• Attachments are handled through authenticated endpoints and private storage rather than a public static folder.
+• Health and readiness endpoints distinguish API liveness from database availability.
+
+
+5. FRAMEWORK REQUIREMENT
+------------------------
+
+Software framework and tools
+• Frontend: React 18, TypeScript, Vite, Vitest, and Testing Library.
+• Backend: Python 3.12+, FastAPI, Pydantic settings/schemas, SQLAlchemy, Alembic, and Uvicorn.
+• Database: PostgreSQL 16 in the supplied Docker Compose setup.
+• Containers: Docker Desktop with Docker Compose.
+• Email in local development: Mailpit captures SMTP messages for inspection; it does not deliver reset messages to real inboxes.
+• Core ML: scikit-learn and joblib. Optional ML/research packages include Sentence Transformers, FAISS CPU, and PM4Py.
+• Source management: Git.
+• Browser: a modern browser to access the local web application.
+
+Practical development machine
+• 64-bit Windows, macOS, or Linux machine capable of running Docker Desktop/Compose.
+• Internet access may be needed to download container images and development packages during initial setup.
+• A practical local development allocation is 8 GB RAM and several GB of free disk space for containers, dependencies, and database data. These are recommendations for running the stack, not measured minimum requirements from a performance benchmark.
+
+Local service addresses
+• Web application: http://localhost:5173
+• API and interactive API docs: http://localhost:8000 and http://localhost:8000/docs
+• API readiness: http://localhost:8000/readyz
+• Mailpit inbox: http://localhost:8025
+
+
+6. APPLICATION
+--------------
+
+Student perspective
+1. Student registers or signs in.
+2. Student selects a service category, describes the issue, and may attach a supported document or image.
+3. Student receives a request record and can revisit it to see status, history, staff-visible replies, and notifications.
+4. After resolution, the student can provide feedback.
+
+Example: A student reports that an internal assessment mark is missing. The request is stored under an academic/examination service category, routed to the appropriate office by an administrator, and updated by staff. The student can see that it was received, assigned, and resolved without repeatedly contacting offices to ask for an update.
+
+Staff perspective
+• Staff see requests permitted by their assignment/department scope.
+• Staff review the description and attachments, communicate with the student, add internal notes where permitted, and update the request status.
+• Similar-request and classification suggestions can help staff triage, but staff remain responsible for deciding what action to take.
+
+Management perspective
+• Administrators provision accounts, manage the request catalog, and assign requests to departments or staff.
+• Authorized management can review request totals, status distribution, department activity, audit history, and workflow measures derived from recorded events.
+• CSV export supports authorized analysis. Process-mining output can show common recorded paths and handoffs; it does not independently explain causes or prove service quality.
+
+Expected value
+• Students have one visible place to submit and track campus-service requests.
+• Staff work from assigned queues with request context and recorded communication.
+• Administrators can review traceable operational records and identify areas that may need investigation.
+• Centralized event history and role checks improve accountability and limit access to records by role.
+
+These are intended benefits of the design, not measured outcomes. A pilot with approved institutional users and data would be needed to measure actual response times, satisfaction, workload, and prediction quality.
+
+
+7. REFERENCES
+--------------
+
+[1] Al-Hawari, F., and Barham, H. “A machine learning based help desk system for IT service management.” Journal of King Saud University Computer and Information Sciences, vol. 33, 2021, pp. 702–718. Published online 2 April 2019. DOI: https://doi.org/10.1016/j.jksuci.2019.04.001
+
+[2] van der Aalst, W. M. P., et al. “Process Mining Manifesto.” Business Process Management Workshops, Lecture Notes in Business Information Processing, vol. 99, Springer, 2012, pp. 169–194. DOI: https://doi.org/10.1007/978-3-642-28108-2_19. Open paper: https://www.vdaalst.com/publications/p658.pdf
+
+[3] Isotani, H., Washizaki, H., Fukazawa, Y., Nomoto, T., Ouji, S., and Saito, S. “Sentence embedding and fine-tuning to automatically identify duplicate bugs.” Frontiers in Computer Science, vol. 4, 2023, article 1032452. DOI: https://doi.org/10.3389/fcomp.2022.1032452
+
+Project implementation documentation
+• CAMPUSINTEL README and architecture/setup documentation in the project repository.
+• CAMPUSINTEL backend research documents: research methodology, experiment protocol, evaluation metrics, and dataset documentation.
+
+
+TEMPLATE PRESENTATION NOTES
+---------------------------
+
+• Keep one consistent template, layout, color scheme, and Times New Roman font throughout the presentation.
+• Use concise bullets on slides; move longer explanations into speaker notes if needed.
+• Have the project guide review the final presentation before presenting.
+• Fill in all cover-slide identity fields with accurate official information.
+
