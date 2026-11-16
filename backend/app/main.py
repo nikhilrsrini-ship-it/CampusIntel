@@ -1,3 +1,5 @@
+import os
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
@@ -7,7 +9,11 @@ from app.database.session import engine
 from app.routers import admin, analytics, attachments, auth, catalog, ml, notifications, requests
 
 settings = get_settings()
-app = FastAPI(title=settings.app_name, version="0.1.0")
+app = FastAPI(
+    title=settings.app_name,
+    version="0.1.0",
+    root_path="/api" if os.getenv("VERCEL") == "1" else "",
+)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins,

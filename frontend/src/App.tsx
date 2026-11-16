@@ -1,5 +1,5 @@
 import { FormEvent, useCallback, useEffect, useState } from 'react'
-import { api, AdminUser, AnalyticsSummary, ApiError, AttachmentRecord, AuditRecord, Category, CommentRecord, Department, DepartmentPerformance, DuplicateRecord, EventRecord, FeedbackRecord, PredictionRecord, readToken, RequestRecord, ResolutionEstimate, saveToken, User, WorkflowMetrics } from './services/api'
+import { api, apiUrl, AdminUser, AnalyticsSummary, ApiError, AttachmentRecord, AuditRecord, Category, CommentRecord, Department, DepartmentPerformance, DuplicateRecord, EventRecord, FeedbackRecord, PredictionRecord, readToken, RequestRecord, ResolutionEstimate, saveToken, User, WorkflowMetrics } from './services/api'
 
 type AuthResult = { access_token: string; user: User }
 type Notification = { id: string; title: string; message: string; is_read: boolean }
@@ -73,7 +73,7 @@ function App() {
       setAuthMode('reset')
     }
     if (!readToken()) {
-      fetch(`${import.meta.env.VITE_API_URL ?? 'http://localhost:8000'}/readyz`).then((response) => setApiState(response.ok ? 'online' : 'offline')).catch(() => setApiState('offline'))
+      fetch(apiUrl('/readyz')).then((response) => setApiState(response.ok ? 'online' : 'offline')).catch(() => setApiState('offline'))
       return
     }
     void refresh()
@@ -197,7 +197,7 @@ function App() {
   async function downloadReport() {
     try {
       const token = readToken()
-      const response = await fetch(`${import.meta.env.VITE_API_URL ?? 'http://localhost:8000'}/analytics/export/requests.csv`, { headers: token ? { Authorization: `Bearer ${token}` } : {} })
+      const response = await fetch(apiUrl('/analytics/export/requests.csv'), { headers: token ? { Authorization: `Bearer ${token}` } : {} })
       if (!response.ok) throw new Error('Report could not be exported')
       const url = URL.createObjectURL(await response.blob()); const link = document.createElement('a'); link.href = url; link.download = 'campusintel-requests.csv'; link.click(); URL.revokeObjectURL(url)
     } catch (caught) { setError(caught instanceof Error ? caught.message : 'Report export failed') }
@@ -206,7 +206,7 @@ function App() {
   async function downloadAttachment(row: RequestRecord, attachment: AttachmentRecord) {
     try {
       const token = readToken()
-      const response = await fetch(`${import.meta.env.VITE_API_URL ?? 'http://localhost:8000'}/requests/${row.id}/attachments/${attachment.id}`, { headers: token ? { Authorization: `Bearer ${token}` } : {} })
+      const response = await fetch(apiUrl(`/requests/${row.id}/attachments/${attachment.id}`), { headers: token ? { Authorization: `Bearer ${token}` } : {} })
       if (!response.ok) throw new Error('Attachment could not be downloaded')
       const url = URL.createObjectURL(await response.blob()); const link = document.createElement('a'); link.href = url; link.download = attachment.original_filename; link.click(); URL.revokeObjectURL(url)
     } catch (caught) { setError(caught instanceof Error ? caught.message : 'Attachment download failed') }
@@ -352,7 +352,7 @@ function TrustCenter({ apiState }: { apiState: string }) {
           <span className={"trust-state " + apiState}><i />{readiness}</span>
           <h3>Live service status</h3>
           <p>The status above comes from a readiness check that verifies the API can reach its database. It is not an uptime guarantee.</p>
-          <a href={(import.meta.env.VITE_API_URL || 'http://localhost:8000') + '/readyz'} target="_blank" rel="noreferrer">View readiness details</a>
+          <a href={apiUrl('/readyz')} target="_blank" rel="noreferrer">View readiness details</a>
         </article>
         <article className="trust-card">
           <span className="trust-index">01 · ACCESS</span>

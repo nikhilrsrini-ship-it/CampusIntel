@@ -1,5 +1,7 @@
-const baseUrl = import.meta.env.VITE_API_URL ?? 'http://localhost:8000'
+const apiBaseUrl = import.meta.env.VITE_API_URL ?? (import.meta.env.PROD ? '/api' : 'http://localhost:8000')
 const tokenKey = 'campusintel_access_token'
+
+export const apiUrl = (path: string) => `${apiBaseUrl}${path}`
 
 export class ApiError extends Error {
   constructor(message: string, readonly status: number) { super(message); this.name = 'ApiError' }
@@ -13,7 +15,7 @@ export async function api<T>(path: string, options: RequestInit = {}): Promise<T
   const token = readToken()
   if (token) headers.set('Authorization', `Bearer ${token}`)
   if (options.body && !(options.body instanceof FormData)) headers.set('Content-Type', 'application/json')
-  const response = await fetch(`${baseUrl}${path}`, { ...options, headers })
+  const response = await fetch(apiUrl(path), { ...options, headers })
   if (!response.ok) {
     const payload = await response.json().catch(() => null) as { detail?: string } | null
     throw new ApiError(payload?.detail ?? `Request failed (${response.status})`, response.status)
